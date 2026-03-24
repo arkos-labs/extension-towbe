@@ -49,13 +49,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ─── SITE DETECTION ──────────────────────────────────────────────────────────
 function isSupported(url) {
-  return url.includes('sncf-connect.com') || url.includes('google.com/travel') ||
-    url.includes('booking.com') || url.includes('thetrainline.com');
+  return url.includes('sncf-connect.com') || url.includes('google.com/travel') || 
+    url.includes('google.com/flights') || url.includes('booking.com') || url.includes('thetrainline.com');
 }
 function detectSite(url) {
   let label = '—', cls = 'unknown';
   if (url.includes('sncf-connect.com'))    { label = 'SNCF Connect'; cls = 'sncf'; }
-  else if (url.includes('google.com/travel')) { label = 'Google Flights'; cls = 'flights'; }
+  else if (url.includes('google.com/travel') || url.includes('google.com/flights')) { label = 'Google Flights'; cls = 'flights'; }
   else if (url.includes('booking.com'))    { label = 'Booking.com'; cls = 'booking'; }
   else if (url.includes('thetrainline.com')) { label = 'Trainline'; cls = 'trainline'; }
   siteBadge.textContent = label;

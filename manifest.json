@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Twobeevent Capture",
-  "version": "2.2.1",
+  "version": "2.3.1",
   "description": "Capture les trajets SNCF, vols et hôtels pour LogiCongrès.",
   "permissions": ["activeTab", "scripting", "storage"],
   "action": {
