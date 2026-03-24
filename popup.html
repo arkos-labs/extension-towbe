@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Twobeevent</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F1117;
+      --surface: #161B27;
+      --surface2: #1F2937;
+      --border: #1F2937;
+      --border2: #374151;
+      --text: #F3F4F6;
+      --muted: #9CA3AF;
+      --hint: #4B5563;
+      --blue: #2563EB;
+      --blue-light: #3B82F6;
+      --blue-bg: rgba(37,99,235,0.12);
+      --green: #10B981;
+      --green-bg: rgba(16,185,129,0.12);
+      --orange: #F97316;
+      --orange-bg: rgba(249,115,22,0.12);
+      --red: #EF4444;
+      --red-bg: rgba(239,68,68,0.1);
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    body {
+      width: 360px;
+      min-height: 200px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--blue);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-icon svg { width: 16px; height: 16px; }
+    .logo-text {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .logo-sub {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .site-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .site-badge.sncf { background: var(--blue-bg); color: var(--blue-light); }
+    .site-badge.flights { background: var(--blue-bg); color: var(--blue-light); }
+    .site-badge.booking { background: var(--blue-bg); color: #60A5FA; }
+    .site-badge.trainline { background: var(--green-bg); color: var(--green); }
+    .site-badge.unknown { background: var(--surface2); color: var(--muted); }
+
+    /* ── MAIN ── */
+    .main { padding: 14px 16px; }
+
+    /* ── ÉTAT VIDE ── */
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--muted);
+    }
+    .empty-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--surface2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    }
+    .empty-icon svg { width: 22px; height: 22px; opacity: 0.5; }
+    .empty-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .empty-sub { font-size: 11px; color: var(--hint); line-height: 1.6; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--hint);
+      margin-bottom: 8px;
+    }
+
+    /* ── CARD TRANSPORT ── */
+    .trip-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .trip-header {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .trip-direction {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .dot-blue { background: var(--blue-light); }
+    .dot-orange { background: var(--orange); }
+    .trip-date {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Segment */
+    .segment {
+      padding: 10px 12px;
+    }
+    .segment + .segment {
+      border-top: 1px solid var(--border);
+    }
+    .segment-num {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--hint);
+      margin-bottom: 6px;
+    }
+    .segment-train {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 7px;
+      letter-spacing: 0.3px;
+    }
+    .segment-train.blue { background: var(--blue-bg); color: var(--blue-light); }
+    .segment-train.orange { background: var(--orange-bg); color: var(--orange); }
+
+    .segment-route {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .route-stop {
+      flex: 1;
+    }
+    .route-time {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .route-city {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 110px;
+    }
+    .route-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 10px;
+      gap: 3px;
+    }
+    .arrow-line {
+      width: 50px;
+      height: 1px;
+      background: var(--border2);
+      position: relative;
+    }
+    .arrow-line::after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      top: -3px;
+      border-left: 5px solid var(--border2);
+      border-top: 3px solid transparent;
+      border-bottom: 3px solid transparent;
+    }
+    .arrow-duration {
+      font-size: 9px;
+      color: var(--hint);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Correspondance label */
+    .correspondance-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--surface2);
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .correspondance-label svg { width: 10px; height: 10px; opacity: 0.5; }
+    .corr-dur {
+      margin-left: auto;
+      font-weight: 700;
+      color: var(--orange);
+      font-size: 10px;
+    }
+
+    /* ── CARD HOTEL ── */
+    .hotel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .hotel-name {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .hotel-address {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .hotel-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .hotel-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--surface2);
+      color: var(--muted);
+    }
+
+    /* ── RÉSUMÉ STOCKAGE ── */
+    .storage-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .storage-item {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .storage-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .storage-info { flex: 1; min-width: 0; }
+    .storage-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--hint); }
+    .storage-val { font-size: 11px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .storage-clear {
+      width: 18px; height: 18px;
+      border: none;
+      background: var(--surface2);
+      color: var(--muted);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .storage-clear:hover { background: var(--red-bg); color: var(--red); }
+    .storage-clear svg { width: 10px; height: 10px; }
+
+    /* ── ACTIONS ── */
+    .actions { display: flex; flex-direction: column; gap: 8px; }
+
+    .btn {
+      width: 100%;
+      padding: 11px 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+      letter-spacing: -0.1px;
+    }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--blue-light); }
+    .btn-primary:disabled { background: var(--surface2); color: var(--hint); cursor: not-allowed; }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--surface2); color: var(--text); }
+
+    .btn-danger {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+    /* ── STATUS ── */
+    .status {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+    .status.success { display: block; background: var(--green-bg); color: var(--green); }
+    .status.error { display: block; background: var(--red-bg); color: var(--red); }
+    .status.loading { display: block; background: var(--blue-bg); color: var(--blue-light); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-id {
+      font-size: 10px;
+      color: var(--hint);
+      font-weight: 500;
+    }
+    .footer-id input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 10px;
+      padding: 3px 7px;
+      width: 160px;
+      outline: none;
+      font-family: monospace;
+      letter-spacing: 0.3px;
+    }
+    .footer-id input:focus { border-color: var(--blue); }
+    .footer-id input::placeholder { color: var(--hint); }
+
+    .capsule {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--hint);
+    }
+    .capsule-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--hint);
+    }
+    .capsule-dot.online { background: var(--green); }
+
+    /* Spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg fill="none" viewBox="0 0 16 16" stroke="white" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12V5a2 2 0 012-2h6a2 2 0 012 2v7M1 12h14M6 5h4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">Twobeevent</div>
+        <div class="logo-sub">Capture</div>
+      </div>
+    </div>
+    <span class="site-badge unknown" id="siteBadge">—</span>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="mainContent">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0015.803 15.803z"/>
+        </svg>
+      </div>
+      <div class="empty-title">Rien à capturer</div>
+      <div class="empty-sub">Ouvrez un trajet sur SNCF Connect,<br>Google Flights, Trainline ou une fiche<br>hôtel sur Booking.com</div>
+    </div>
+
+    <div id="dataContent" style="display:none">
+
+      <!-- Résumé stocké -->
+      <div id="storageSummary" style="display:none; margin-bottom:12px;">
+        <div class="section-label">En mémoire</div>
+        <div class="storage-bar">
+          <div class="storage-item" id="storageAller">
+            <div class="storage-dot dot-blue"></div>
+            <div class="storage-info">
+              <div class="storage-label">Aller</div>
+              <div class="storage-val" id="allerVal">—</div>
+            </div>
+            <button class="storage-clear" id="clearAller" title="Effacer l'aller">
+              <svg fill="none" viewBox="0 0 12 12" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M2 2l8 8M10 2L2 10"/></svg>
+            </button>
+          </div>
+          <div class="storage-item" id="storageRetour">
+            <div class="storage-dot dot-orange"></div>
+            <div class="storage-info">
+              <div class="storage-label">Retour</div>
+              <div class="storage-val" id="retourVal">—</div>
+            </div>
+            <button class="storage-clear" id="clearRetour" title="Effacer le retour">
+              <svg fill="none" viewBox="0 0 12 12" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M2 2l8 8M10 2L2 10"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview extrait -->
+      <div id="previewSection" style="display:none;">
+        <div class="section-label" id="previewLabel">Extrait maintenant</div>
+        <div id="transportPreview"></div>
+        <div id="hotelPreview"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-primary" id="captureBtn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+          </svg>
+          Capturer cette page
+        </button>
+        <button class="btn btn-primary" id="sendBtn" disabled>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+          Envoyer vers LogiCongrès
+        </button>
+        <button class="btn btn-danger" id="resetBtn" style="display:none;">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          Tout réinitialiser
+        </button>
+      </div>
+
+      <div class="status" id="statusMsg"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-id">
+      <input type="text" id="participantId" placeholder="ID du participant…" />
+    </div>
+    <div class="capsule">
+      <div class="capsule-dot" id="serverDot"></div>
+      <span id="serverLabel">localhost</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
